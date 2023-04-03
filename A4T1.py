@@ -1,12 +1,13 @@
 ############################ Import Dependencies ############################
 from pymongo import MongoClient 
 import json
+import sys
 ############################################################################
 
 ################################## Class ##################################
 class Database:
-    def __init__(self, database_name):
-        self.client = MongoClient('localhost', 71072)
+    def __init__(self, database_name, port_number):
+        self.client = MongoClient('localhost', port_number)
         self.db = self.client[database_name]
     
     def create_collection(self, collection_name):
@@ -23,7 +24,8 @@ class Database:
 
 ################################## Main ##################################
 if __name__ == "__main__":
-    A4dbNorm = Database("A4dbNorm")
+    port_number = int(sys.argv[1])
+    A4dbNorm = Database("A4dbNorm", port_number)
     songwriters = A4dbNorm.create_collection("songwriters")
     A4dbNorm.fill_collection(songwriters, "songwriters.json")
     recordings = A4dbNorm.create_collection("recordings")

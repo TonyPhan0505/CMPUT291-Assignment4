@@ -2,6 +2,7 @@
 from pymongo import MongoClient 
 import json
 import sys
+from bson import json_util
 ############################################################################
 
 ################################## Class ##################################
@@ -19,7 +20,12 @@ class Database:
         with open(json_filename, 'r') as f:
             data = json.load(f)
             f.close()
-        collection.insert_many(data)
+        for item in data:
+            item['_id'] = json_util.loads(json_util.dumps(item['_id']))
+            collection.insert_one(item)
+    
+    def close(self):
+        self.client.close()
 ###########################################################################
 
 ################################## Main ##################################
@@ -30,4 +36,5 @@ if __name__ == "__main__":
     A4dbNorm.fill_collection(songwriters, "songwriters.json")
     recordings = A4dbNorm.create_collection("recordings")
     A4dbNorm.fill_collection(recordings, "recordings.json")
+    A4dbNorm.close()
 ###########################################################################

@@ -2,6 +2,7 @@
 from pymongo import MongoClient 
 import json
 import sys
+from bson import json_util
 ############################################################################
 
 ################################## Class ##################################
@@ -38,6 +39,14 @@ class Database:
                 )
             )
         return parent_data
+
+    def fill_collection(self, collection, data):
+        for item in data:
+            item['_id'] = json_util.loads(json_util.dumps(item['_id']))
+            collection.insert_one(item)
+    
+    def close(self):
+        self.client.close()
 ###########################################################################
 
 ################################## Main ##################################
@@ -51,5 +60,6 @@ if __name__ == "__main__":
         'recordings'
     )
     SongwritersRecordings = A4dbEmbed.create_collection('SongwritersRecordings')
-    SongwritersRecordings.insert_many(merged_data)
+    A4dbEmbed.fill_collection(SongwritersRecordings, merged_data)
+    A4dbEmbed.close()
 ###########################################################################

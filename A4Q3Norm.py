@@ -54,6 +54,9 @@ class SongDatabase:
         result = self.db.songwriters.aggregate(pipeline)
         for songwriter in result:
             print(songwriter)
+    
+    def close(self):
+        self.client.close()
 ###############################################################
 
 ############################ Styles ##########################
@@ -61,4 +64,5 @@ if __name__ == "__main__":
     port_number = int(sys.argv[1])
     A4dbNorm = SongDatabase("A4dbNorm", port_number)
     A4dbNorm.solve_A4Q3Norm()
+    A4dbNorm.close()
 ##############################################################

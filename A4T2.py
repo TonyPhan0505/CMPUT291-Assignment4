@@ -26,6 +26,7 @@ class Database:
         for item in data:
             if item[PK] == id:
                 item['issue_date'] = json_util.loads(json_util.dumps(item['issue_date']))
+                item['_id'] = json_util.loads(json_util.dumps(item['_id']))
                 return item
         return None
 
@@ -45,6 +46,7 @@ class Database:
         for item in data:
             item['_id'] = json_util.loads(json_util.dumps(item['_id']))
             collection.insert_one(item)
+            print(item)
     
     def close(self):
         self.client.close()

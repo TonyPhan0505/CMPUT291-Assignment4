@@ -1,12 +1,14 @@
 ############################ Import Dependencies ############################
 from pymongo import MongoClient 
 import json
+import sys
+from bson import json_util
 ############################################################################
 
 ################################## Class ##################################
 class Database:
-    def __init__(self, database_name):
-        self.client = MongoClient('localhost', 71072)
+    def __init__(self, database_name, port_number):
+        self.client = MongoClient('localhost', port_number)
         self.db = self.client[database_name]
     
     def create_collection(self, collection_name):
@@ -18,14 +20,23 @@ class Database:
         with open(json_filename, 'r') as f:
             data = json.load(f)
             f.close()
-        collection.insert_many(data)
+        for item in data:
+            item['_id'] = json_util.loads(json_util.dumps(item['_id']))
+            if item.get('issue_date'):
+                item['issue_date'] = json_util.loads(json_util.dumps(item['issue_date']))
+            collection.insert_one(item)
+    
+    def close(self):
+        self.client.close()
 ###########################################################################
 
 ################################## Main ##################################
 if __name__ == "__main__":
-    A4dbNorm = Database("A4dbNorm")
+    port_number = int(sys.argv[1])
+    A4dbNorm = Database("A4dbNorm", port_number)
     songwriters = A4dbNorm.create_collection("songwriters")
     A4dbNorm.fill_collection(songwriters, "songwriters.json")
     recordings = A4dbNorm.create_collection("recordings")
     A4dbNorm.fill_collection(recordings, "recordings.json")
+    A4dbNorm.close()
 ###########################################################################

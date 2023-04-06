@@ -1,7 +1,6 @@
 ############################ Import Dependencies ############################
 from pymongo import MongoClient
 import sys
-import datetime
 #############################################################################
 
 ############################ Class ############################
@@ -28,7 +27,7 @@ class SongDatabase:
 
             {
                 '$project': {
-                    '_id': [],
+                    '_id': '',
                     'avg_rhythmicality': 1
                 }
             }

@@ -13,9 +13,7 @@ class SongDatabase:
         self.client.close()
     
     def solve_A4Q1Embed(self):
-        '''
-            Just like in A4Q3Norm.py except we don't have to join the documents from 2 tables anymore.
-        '''
+        
         pipeline = [
             {
                 '$unwind': "$songwriters"

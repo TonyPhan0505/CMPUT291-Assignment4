@@ -46,7 +46,6 @@ class Database:
         for item in data:
             item['_id'] = json_util.loads(json_util.dumps(item['_id']))
             collection.insert_one(item)
-            print(item)
     
     def close(self):
         self.client.close()

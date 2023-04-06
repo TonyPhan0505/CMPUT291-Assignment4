@@ -22,6 +22,8 @@ class Database:
             f.close()
         for item in data:
             item['_id'] = json_util.loads(json_util.dumps(item['_id']))
+            if item.get('issue_date'):
+                item['issue_date'] = json_util.loads(json_util.dumps(item['issue_date']))
             collection.insert_one(item)
     
     def close(self):

@@ -11,53 +11,24 @@ class SongDatabase:
         self.db = self.client[database_name]
 
     def solve_A4Q2Norm(self):
-        '''Write a query to get the average rhythmicality for all recordings that have a recording_id beginning with “70”'''
-        '''
-            SQL:
-                SELECT recordings._id AS _id, AVERAGE(recordings.rhythmicality) AS avg_rhythmicality
-                FROM recordings, songwriters
-                WHERE 
-                    (recordings.recording_id IN songwriters.recordings) 
-                        AND 
-                    (recordings.recording_id LIKE "70%");
-        '''
-        '''Match recordings with a recording_id beginning with “70”'''
-        '''Look up songwriters collection to get associated recordings'''
-        '''Unwind the songwriters array'''
-        '''Group by recording_id and calculate the average rhythmicality'''
-        '''Project output fields'''
+
         pipeline = [
             {
                 '$match': {
-                    '_id': "/^70/"
+                    'recording_id': {'$regex': '^70'}
                 }
-            },
-
-            {
-                '$lookup': {
-                    'from': 'songwriters',
-                    'localField': 'recording_id',
-                    'foreignField': 'recordings',
-                    'as': "songwriters"
-                }
-            },
-
-            {
-                '$unwind': "$songwriters"
             },
 
             {
                 '$group': {
-                    '_id': "$_id",
-                    'avg_rhythmicality': {
-                        '$avg': "$rhythmicality"
+                    '_id': None, 
+                    'avg_rhythmicality': {'$avg': '$rhythmicality'}
                     }
-                }
             },
 
             {
                 '$project': {
-                    '_id': 1,
+                    '_id': [],
                     'avg_rhythmicality': 1
                 }
             }

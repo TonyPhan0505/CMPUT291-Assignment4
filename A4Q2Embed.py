@@ -1,7 +1,6 @@
 ############################ Import Dependencies ############################
 from pymongo import MongoClient
 import sys
-import datetime
 #############################################################################
 
 ############################ Class ############################
@@ -17,30 +16,29 @@ class SongDatabase:
 
         pipeline = [
             {
-                '$match': {
-                    '_id': "/^70/"
-                }
+                '$unwind': "$recordings"
             },
 
             {
-                '$unwind': "$songwriters"
+                '$match': {
+                    'recordings.recording_id': {'$regex': '^70'}
+                }
             },
 
             {
                 '$group': {
-                    '_id': "$_id",
-                    'avg_rhythmicality': {
-                        '$avg': "$rhythmicality"
+                    '_id': None, 
+                    'avg_rhythmicality': {'$avg': '$recordings.rhythmicality'}
                     }
-                }
             },
 
             {
                 '$project': {
-                    '_id': 1,
+                    '_id': '',
                     'avg_rhythmicality': 1
                 }
             }
+
         ]
         result = self.db.SongwritersRecordings.aggregate(pipeline)
         for recording in result:

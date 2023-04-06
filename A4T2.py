@@ -25,6 +25,7 @@ class Database:
     def find_record(self, data, PK, id):
         for item in data:
             if item[PK] == id:
+                item['issue_date'] = json_util.loads(json_util.dumps(item['issue_date']))
                 return item
         return None
 

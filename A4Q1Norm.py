@@ -38,58 +38,43 @@ class SongDatabase:
             
             {
                 '$lookup': {
-                    'from': 'songwriters',
-                    'localField': 'recording_id',
-                    'foreignField': 'recordings',
-                    'as': "songwriters"
+                    'from': 'recordings',
+                    'localField': 'songwriter_id',
+                    'foreignField': 'songwriter_ids',
+                    'as': "matched_recordings"
                 }
             },
             
             {
                 '$match': {
-                    'songwriters': {
+                    'matched_recordings': {
                         '$ne': []
                     }
                 }
             },
             
             {
-                '$project': {
-                    "recording_id": '$_id',
-                    "num_recordings": {
-                        '$map': {
-                            'input': '$num_recordings',
-                            'in': {
-                                'toInt': '$$this'
-                            }
-                        }
-                    }
-                }
-            },
-            
-            {
-                '$unwind': '$num_recordings'
+                '$unwind': '$matched_recordings'
             },
             
             {
                 '$group': {
                     '_id': {
-                        'songwriter_id': '$songwriters._id',
-                    },
-                    'name': {
-                        '$first': '$songwriters.name'
+                        '_id': '$_id',
+                        'songwriter_id': '$songwriter_id',
+                        'name': '$name'
                     },
                     'num_recordings': {
-                        '$sum': "$num_recordings"
+                        '$count': {}
                     }
                 }
             },
 
             {
                 '$project': {
-                    '_id': 0,
+                    '_id': '$_id._id',
                     'songwriter_id': '$_id.songwriter_id',
-                    'name': 1,
+                    'name': '$_id.name',
                     'num_recordings': 1
                 }
             }
@@ -107,7 +92,7 @@ class SongDatabase:
 ############################ Styles ##########################
 if __name__ == "__main__":
     port_number = int(sys.argv[1])
-    A4dbNorm = SongDatabase("A1dbNorm", port_number)
+    A4dbNorm = SongDatabase("A4dbNorm", port_number)
     A4dbNorm.solve_A4Q1Norm()
     A4dbNorm.close()
 ##############################################################

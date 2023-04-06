@@ -15,55 +15,38 @@ class SongDatabase:
     def solve_A4Q1Embed(self):
         
         pipeline = [
+           
+            
             {
-                '$unwind': "$songwriters"
+                '$unwind': '$recordings'
             },
 
             {
                 '$match': {
-                    'songwriters': {
+                    'matched_recordings': {
                         '$ne': []
-                    }
-                }
-            },
-
-            {
-                '$project': {
-                    "recording_id": '$_id',
-                    "num_recordings": {
-                        '$map': {
-                            'input': '$num_recordings',
-                            'in': {
-                                'toInt': '$$this'
-                            }
-                        }
                     }
                 }
             },
             
             {
-                '$unwind': '$num_recordings'
-            },
-
-            {
                 '$group': {
                     '_id': {
-                        'songwriter_id': '$songwriters._id',
-                    },
-                    'name': {
-                        '$first': '$songwriters.name'
+                        '_id': '$_id',
+                        'songwriter_id': '$songwriter_id',
+                        'name': '$name'
                     },
                     'num_recordings': {
-                        '$sum': "$num_recordings"
+                        '$count': {}
                     }
                 }
             },
 
             {
                 '$project': {
-                    '_id': 0,
+                    '_id': '$_id._id',
                     'songwriter_id': '$_id.songwriter_id',
-                    'name': 1,
+                    'name': '$_id.name',
                     'num_recordings': 1
                 }
             }

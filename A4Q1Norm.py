@@ -27,12 +27,12 @@ class SongDatabase:
                     songwriters.name
                 );
         '''
-        '''Join with songwriters collection'''
-        '''Filter out recordings without any associated songwriters'''
-        '''Project the recording_id and the transformed num_recordings array'''
-        '''Unwind the num_recordings array'''
-        '''Group by songwriter_id and count the number of recordings'''
-        '''Project the output fields and rename the _id as songwriter_id'''
+        '''Join with songwriters collection
+        Filter out recordings without any associated songwriters
+        Project the recording_id and the transformed num_recordings array
+        Unwind the num_recordings array
+        Group by songwriter_id and count the number of recordings
+        Project the output fields and rename the _id as songwriter_id'''
 
         pipeline = [
             
